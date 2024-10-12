@@ -17,3 +17,14 @@
     ```bash
     python manage.py runserver
     ```
+
+## TODO
+- [X] Add support for all blog pages and individual pages.
+- [X] Add the Error page.
+- [X] Populate blog w/ dummy data.
+- [X] Give simple CSS.
+- [ ] Add CRUD functionality.
+- [ ] Add CRUD screens.
+- [ ] Add support for static images.
+- [ ] Add compression for images.
+- [ ] Deploy.

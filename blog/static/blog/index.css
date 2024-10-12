@@ -2,10 +2,11 @@ section {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  margin-top: 16rem
 }
 h1 {
   font-size: 3rem;
+  margin-bottom: 2rem;
 }
 p {
   font-size: 1.5rem;

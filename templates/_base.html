@@ -1,14 +1,28 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>
-    {% block page_title %}{% endblock page_title %}
-  </title>
-  {% block css_files %}{% endblock css_files %}
-</head>
-<body>
-  {% block content %}{% endblock content %}  
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block page_title %}{% endblock page_title %}</title>
+    <link rel="stylesheet" href="{% static '_base.css' %}" />
+    {% block css_files %}{% endblock css_files %}
+  </head>
+  <body class="">
+    <nav class="">
+      <div class="flex justify-content-between container">
+        <div class="flex">
+          <a href="{% url "index" %}" class="">Rohil's Blog</a>
+          <a href="{% url 'all_posts_page' %}" class="">All Posts</a>
+        </div>
+        <div class="">
+          <a href="https://www.rohilvarma.com/" target="_blank" class="">About me ↗</a>
+        </div>
+      </div>
+    </nav>
+    <div class="container">
+      {% block content %}{% endblock content %}
+    </div>
+  </body>
 </html>
