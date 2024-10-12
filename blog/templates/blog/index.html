@@ -1,0 +1,28 @@
+{% extends "_base.html" %}
+
+{% load static %}
+
+{% block page_title %}
+Rohil's Blog
+{% endblock page_title %}
+
+{% block css_files %}
+  <link rel="stylesheet" href="{% static 'blog/index.css' %}">
+{% endblock css_files %}
+
+{% block content %}
+  <section class="welcome">
+    <div class="">
+      <h1 class="">
+        Hi, my name is Rohil!
+      </h1>
+      <p class="">
+        I love learning about new tech and more than that I love working on some exciting project using them!
+      </p>
+      <p class="">
+        P.S. feel free to ping me and reach out to me.
+      </p>
+    </div>
+
+  </section>
+{% endblock content %}
