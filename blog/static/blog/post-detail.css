@@ -16,3 +16,27 @@ p {
   margin: 2rem 0;
   font-size: 1.5rem;
 }
+
+form {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  gap: 0.25rem;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  border: none;
+  background-color: rgb(66, 66, 255);
+  color: white;
+  cursor: pointer;
+}
+
+button:last-child {
+  background-color: rgb(255, 66, 66);
+}
+
+button:hover {
+  opacity: 0.85;
+}

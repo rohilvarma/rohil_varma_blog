@@ -1,58 +1,101 @@
-from django.shortcuts import render, HttpResponse
-from django.http import Http404
+from django.shortcuts import HttpResponse, render, get_object_or_404, HttpResponseRedirect
+from django.http import HttpRequest
+from django.urls import reverse
 
-samplePostsData = [
-  {
-    "title": "Post One",
-    "content": "This is my first blog post!",
-    "date_posted": "August 27, 2020",
-    "post_link": "post-one",
-  },
-  {
-    "title": "Post Two: My Favorite Hobby",
-    "content": "I love playing guitar in my free time. There's something about creating music that just makes me feel alive. I've been playing for years now, and I still get excited every time I pick up my instrument.",
-    "date_posted": "September 1, 2020",
-    "post_link": "my-favorite-hobby",
-  },
-  {
-    "title": "Post Three: Traveling the World",
-    "content": "I've always been fascinated by different cultures and ways of life. That's why I love traveling so much. Whether it's exploring the ancient ruins of Rome or trying new foods in Tokyo, I'm always up for an adventure.",
-    "date_posted": "September 15, 2020",
-    "post_link": "traveling-the-world",
-  },
-  {
-    "title": "Post Four: My Favorite Books",
-    "content": "I'm a big reader, and I love getting lost in a good book. Some of my favorite authors include J.K. Rowling, J.R.R. Tolkien, and George R.R. Martin. I also enjoy reading non-fiction books on history and science.",
-    "date_posted": "October 1, 2020",
-    "post_link": "my-favorite-books",
-  },
-  {
-    "title": "Post Five: Learning to Code",
-    "content": "I recently started learning how to code, and it's been a really rewarding experience. I've always been interested in technology, and now I'm finally able to create my own projects and bring my ideas to life.",
-    "date_posted": "October 15, 2020",
-    "post_link": "learning-to-code",
-  },
-  {
-    "title": "Post Six: My Favorite Foods",
-    "content": "I love trying new foods and drinks, but I also have a few favorite comfort foods that I always come back to. Some of my go-to dishes include pasta, pizza, and sushi. I also enjoy trying new craft beers and wines.",
-    "date_posted": "November 1, 2020",
-    "post_link": "my-favorite-foods",
-  },
-]
+from .models import Post
+
+
+def __is_post_modified(post: Post) -> bool:
+  """
+  Check if a Post has been modified since it was first posted.
+
+  Since the DateTimeField is down to the microsecond, we compare the two
+  timestamps after stripping out the microseconds to avoid false
+  negatives from the comparison.
+
+  Args:
+    post: The Post to check for modification.
+
+  Returns:
+    True if the Post was modified, False otherwise.
+  """
+  return post.date_modified.replace(microsecond=0) != post.date_posted.replace(microsecond=0)
 
 
 # Create your views here.
-def index(request) -> HttpResponse:
+def index(request: HttpRequest) -> HttpResponse:
+  """
+  Show the homepage of the blog.
+
+  This view is the homepage of the blog. It renders the blog/index.html
+  template.
+
+  Parameters:
+    request (HttpRequest): The request object.
+
+  Returns:
+    HttpResponse: The rendered template.
+  """
   return render(request, "blog/index.html")
 
+def all_posts(request: HttpRequest) -> HttpResponse:
+  """
+  Show all the blog posts.
 
-def all_posts(request) -> HttpResponse:
-  return render(request, "blog/all-posts.html", {"posts": samplePostsData})
+  This view shows all the blog posts. It renders the blog/all-posts.html
+  template.
+
+  Parameters:
+    request (HttpRequest): The request object.
+
+  Returns:
+    HttpResponse: The rendered template.
+  """
+  posts = Post.objects.all()
+  for post in posts:
+    post.is_modified = __is_post_modified(post)
+
+  return render(request, "blog/all-posts.html", {"posts": posts})
 
 
-def post_detail(request, slug: str) -> HttpResponse:
-  post = next((post for post in samplePostsData if post["post_link"] == slug), None)
-  if post:
-    return render(request, "blog/post-detail.html", {"post": post})
+def post_detail(request: HttpRequest, slug: str) -> HttpResponse:
+  """
+  Show a single blog post.
+
+  This view takes a slug as a parameter and uses it to find the Post
+  object in the database. It then renders the post-detail.html template
+  with that Post object.
+
+  If the Post object with the given slug does not exist, this view will
+  raise a 404 error.
+
+  Parameters:
+    request (HttpRequest): The request object.
+    slug (str): The slug of the Post to show.
+
+  Returns:
+    HttpResponse: The rendered post-detail.html template.
+  """
+  post = get_object_or_404(Post, slug=slug)
+  post.is_modified = __is_post_modified(post)
+  return render(request, "blog/post-detail.html", {"post": post})
+
+def delete_post(request, slug: str) -> HttpResponse:
+  """
+  Delete a blog post.
+
+  This view takes a slug as a parameter and deletes the Post object with
+  that slug from the database. It then redirects to the all_posts_page
+  URL.
+
+  Parameters:
+    request (HttpRequest): The request object.
+    slug (str): The slug of the Post to delete.
+
+  Returns:
+    HttpResponse: The redirect to the all_posts_page URL.
+  """
+  post = Post.objects.get(slug=slug)
+  post.delete()
+  return HttpResponseRedirect(reverse("all_posts_page"))
   
-  raise Http404("Post not found")

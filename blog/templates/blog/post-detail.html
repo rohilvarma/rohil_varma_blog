@@ -1,27 +1,35 @@
 {% extends "_base.html" %}
 
-{% load static %}
-
-{% block page_title %}
-{{ post.title | title }}
-{% endblock page_title %}
+{% load static %} 
+{% block page_title %} 
+  {{ post.title | title }}
+{% endblock page_title %} 
 
 {% block css_files %}
-<link rel="stylesheet" href="{% static 'blog/post-detail.css' %}">
-{% endblock css_files %}
-
-
+  <link rel="stylesheet" href="{% static 'blog/post-detail.css' %}" />
+{% endblock css_files %} 
 {% block content %}
-<section id="post">
-
-  <h2 class="">
-    {{ post.title | title }}
-  </h2>
-  <time datetime="">
-    Posted on: {{ post.date_posted }}
-  </time>
-  <p class="">
-    {{ post.content }}
-  </p>
-</section>
+  <section id="post">
+    <h2 class="">{{ post.title | title }}</h2>
+    <time datetime="">
+      {% if post.is_modified %} 
+        Modified on: {{ post.date_modified }} 
+      {% else %}
+        Posted on: {{ post.date_posted }} 
+      {% endif %}
+    </time>
+    <p class="">{{ post.content }}</p>
+  </section>
+  <footer class="">
+    <form
+      action="{% url 'delete_post_page' post.slug %}"
+      method="post"
+      onsubmit="return confirm('Are you sure you want to delete this post?')"
+      class=""
+    >
+      {% csrf_token %}
+      <button type="submit" class="">Edit</button>
+      <button type="submit" class="">Delete</button>
+    </form>
+  </footer>
 {% endblock content %}

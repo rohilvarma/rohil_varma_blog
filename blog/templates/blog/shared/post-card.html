@@ -2,10 +2,18 @@
 
 <link rel="stylesheet" href="{% static 'blog/shared/post-card.css'%}">
 <div class="">
-  <a href="{% url 'post_detail_page' slug=post.post_link %}" class="">
+  <a href="{% url 'post_detail_page' slug=post.slug %}" class="">
     <div class="flex">
       <h3 class=""> {{ post.title | title}} </h3>
-      <time class=""> {{ post.date_posted }}</time>
+      <time class=""> 
+        {% if post.is_modified %}
+        Modified on: {{ post.date_modified }}
+        {% else %}
+        Posted on: {{ post.date_posted }}
+        {% endif %}
+      </time>
+
+      {{ post.test }}
     </div>
     <p class="">
       {{ post.content }}
